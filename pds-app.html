@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PDS APP — Pinoy Debate Society</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#f6b73c;--gold2:#ffd97a;--red:#e0453a;--green:#35d07f;--blue:#4ea3f1;}
+body[data-theme="dark"]{
+  --bg:#0b0910;--bg2:#151020;--card:#1d1729;--card2:#272039;--line:#3a2f4d;
+  --text:#f3ead9;--muted:#b9a98f;--gold:#f6b73c;--gold2:#ffd97a;--red:#e0453a;--green:#35d07f;--blue:#4ea3f1;
+  --shadow:0 8px 24px rgba(0,0,0,.45);
+}
+body[data-theme="light"]{
+  --bg:#f6efe1;--bg2:#fff8ea;--card:#ffffff;--card2:#fdf3dd;--line:#e7d6b4;
+  --text:#2a2118;--muted:#7a6a55;--gold:#b87914;--gold2:#8a5a08;--red:#c0392b;--green:#1e9e5a;--blue:#2f78c4;
+  --shadow:0 8px 22px rgba(120,90,30,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+h1,h2,h3,.serif{font-family:'Playfair Display',serif}
+.app{max-width:480px;margin:0 auto;min-height:100dvh;padding:14px 14px 96px;position:relative}
+/* ---------- splash ---------- */
+#splash{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 35%,#3a1d08 0%,#160d05 45%,#07040a 100%);transition:opacity .6s;text-align:center;padding:24px}
+#splash.hide{opacity:0;pointer-events:none}
+.phoenix{font-size:88px;filter:drop-shadow(0 0 26px rgba(246,183,60,.8));animation:glow 2.2s ease-in-out infinite}
+@keyframes glow{0%,100%{transform:scale(1);filter:drop-shadow(0 0 18px rgba(246,183,60,.6))}50%{transform:scale(1.08);filter:drop-shadow(0 0 38px rgba(246,183,60,.95))}}
+.splash-title{font-size:34px;font-weight:800;letter-spacing:6px;color:var(--gold2);margin-top:18px}
+.splash-sub{color:var(--muted);letter-spacing:3px;font-size:13px;margin-top:8px;text-transform:uppercase}
+.splash-tag{color:var(--gold);margin-top:14px;font-size:14px;letter-spacing:2px}
+.tap-start{margin-top:42px;padding:14px 34px;border:1px solid var(--gold);color:var(--gold2);border-radius:999px;font-weight:700;letter-spacing:2px;animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:.75}50%{opacity:1}}
+/* ---------- top bar ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .mark{font-size:26px;filter:drop-shadow(0 0 10px rgba(246,183,60,.6))}
+.brand b{font-family:'Playfair Display',serif;color:var(--gold2);font-size:18px;letter-spacing:1px}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:2px}
+.topbtns{display:flex;gap:8px}
+.iconbtn{background:var(--card);border:1px solid var(--line);color:var(--text);width:38px;height:38px;border-radius:12px;font-size:16px;cursor:pointer}
+/* ---------- screens / nav ---------- */
+.screen{display:none;animation:fade .25s ease}
+.screen.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.bottomnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;
+  display:flex;background:var(--card);border-top:1px solid var(--line);z-index:40;padding:6px 4px calc(8px + env(safe-area-inset-bottom))}
+.navbtn{flex:1;background:none;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;cursor:pointer;padding:6px 0}
+.navbtn .ic{font-size:21px}
+.navbtn.active{color:var(--gold)}
+/* ---------- cards / controls ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h3{font-size:15px;color:var(--gold2);margin-bottom:10px;letter-spacing:.5px}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+label.flabel{display:block;font-size:11px;color:var(--muted);margin:10px 0 5px;letter-spacing:.5px;text-transform:uppercase}
+.input,select.input{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:12px 13px;font-size:15px;outline:none}
+.input:focus{border-color:var(--gold)}
+.btn{display:block;width:100%;padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-weight:700;font-size:15px;cursor:pointer;margin-top:12px}
+.btn.gold{background:linear-gradient(135deg,#f6b73c,#c97b18);color:#1a1005;border:none}
+.btn.danger{background:linear-gradient(135deg,#e0453a,#9c231b);color:#fff;border:none}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.seg{display:flex;gap:8px;margin-top:6px}
+.segbtn{flex:1;padding:10px 4px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);color:var(--muted);font-weight:700;cursor:pointer;font-size:13px}
+.segbtn.on{border-color:var(--gold);color:var(--gold2);background:rgba(246,183,60,.12)}
+.badge{display:inline-block;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:1px}
+.badge.gold{background:rgba(246,183,60,.16);color:var(--gold2)}
+.badge.green{background:rgba(53,208,127,.16);color:var(--green)}
+.badge.gray{background:rgba(160,160,160,.16);color:var(--muted)}
+.muted{color:var(--muted);font-size:12px}
+.small{font-size:10px}
+.note{background:rgba(246,183,60,.08);border-left:3px solid var(--gold);padding:10px 12px;border-radius:10px;font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5}
+/* ---------- home ---------- */
+.hero{text-align:center;padding:22px 16px}
+.hero .ph{font-size:44px;filter:drop-shadow(0 0 18px rgba(246,183,60,.7))}
+.hero h2{color:var(--gold2);letter-spacing:3px;margin-top:8px}
+.histitem{display:flex;justify-content:space-between;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line)}
+.histitem:last-child{border-bottom:none}
+.hscore{text-align:right;font-weight:800;color:var(--gold2)}
+/* ---------- timer editor ---------- */
+.roundrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.roundrow:last-child{border-bottom:none}
+.rnum{width:28px;height:28px;border-radius:9px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--gold2);font-size:12px;flex:none}
+.rinfo{flex:1}
+.rname{font-size:13px;font-weight:600}
+.rside{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.rtime{display:flex;align-items:center;gap:4px}
+.rtime input{width:44px;background:var(--bg2);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:8px 6px;text-align:center;font-size:14px}
+.rtime span{color:var(--muted);font-size:11px}
+/* ---------- scores ---------- */
+.scoregrid{display:flex;gap:12px;margin-bottom:12px}
+.scorecard{flex:1;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:16px;text-align:center}
+.scorecard.lead{border-color:var(--gold);box-shadow:0 0 18px rgba(246,183,60,.25)}
+.scorecard .label{font-size:12px;color:var(--muted);font-weight:700}
+.scorecard .total{font-size:40px;font-weight:800;margin-top:6px}
+#affCard .total{color:var(--green)}#oppCard .total{color:var(--blue)}
+.scorebtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.logline{font-size:12px;padding:6px 4px;border-bottom:1px solid var(--line);color:var(--muted)}
+/* ---------- AI ---------- */
+.verdict{display:none;margin-top:12px;padding:14px;border-radius:14px;font-weight:700;font-size:14px}
+.verdict.show{display:block}
+.verdict.green{background:rgba(53,208,127,.14);color:var(--green);border:1px solid rgba(53,208,127,.4)}
+.verdict.yellow{background:rgba(246,183,60,.14);color:var(--gold2);border:1px solid rgba(246,183,60,.45)}
+.verdict.red{background:rgba(224,69,58,.14);color:var(--red);border:1px solid rgba(224,69,58,.4)}
+.aiitem{padding:9px 4px;border-bottom:1px solid var(--line);font-size:13px}
+.aiitem:last-child{border-bottom:none}
+/* ---------- profile ---------- */
+.setrow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}
+.setrow:last-child{border-bottom:none}
+.radios{display:flex;gap:10px}
+.radio{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
+.switch{position:relative;width:48px;height:26px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;cursor:pointer}
+.switch.on{background:var(--gold)}
+.switch::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.switch.on::after{left:24px}
+/* ---------- live ---------- */
+.live-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.topic-line{font-weight:800;font-size:15px;margin:8px 0 4px}
+.people-count{font-size:12px;color:var(--muted)}
+.pgrid{display:flex;gap:10px;margin:12px 0}
+.pcol{flex:1}
+.phead{font-size:12px;font-weight:800;margin-bottom:8px;letter-spacing:1px}
+.pcard{display:flex;justify-content:space-between;align-items:center;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin-bottom:8px;font-size:13px}
+.pcard.aff{border-left:3px solid var(--green)}
+.pcard.opp{border-left:3px solid var(--blue)}
+.pcard.empty{color:var(--muted);font-size:12px;border-left:3px solid var(--line)}
+.pdots{font-size:13px}
+.timer-card{text-align:center;padding:20px 14px;border-radius:20px;border:2px solid var(--line);background:var(--bg2);margin:12px 0;transition:border-color .3s,box-shadow .3s}
+.timer-card.st-run{border-color:var(--green);box-shadow:0 0 22px rgba(53,208,127,.22)}
+.timer-card.st-warn{border-color:var(--gold);box-shadow:0 0 22px rgba(246,183,60,.28)}
+.timer-card.st-done{border-color:var(--red);box-shadow:0 0 22px rgba(224,69,58,.25)}
+#timerText{font-size:58px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:2px}
+#roundName{color:var(--gold2);font-weight:700;font-size:14px;margin-bottom:6px}
+#speakerNow{color:var(--muted);font-size:12px;margin-top:6px}
+.timerbar{height:6px;background:var(--line);border-radius:99px;margin-top:12px;overflow:hidden}
+.timerbar>div{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:99px;transition:width 1s linear}
+.ctlrow{display:flex;gap:8px;flex-wrap:wrap}
+.ctlrow .btn{margin-top:0;flex:1;min-width:90px;padding:12px 8px;font-size:14px}
+.guest-hint{font-size:12px;color:var(--gold2);background:rgba(246,183,60,.1);padding:8px 12px;border-radius:10px;margin:10px 0}
+.chatbox{height:150px;overflow-y:auto;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:10px;font-size:13px;margin:10px 0}
+.msg{padding:4px 0;line-height:1.4}
+.msg b{color:var(--gold2)}
+.chat-input{display:flex;gap:8px}
+.chat-input .input{flex:1}
+.streamrow{display:flex;gap:8px}
+.streambtn{flex:1;padding:11px 4px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);color:var(--muted);font-weight:700;cursor:pointer;font-size:13px}
+.streambtn.on{border-color:var(--red);color:var(--red);background:rgba(224,69,58,.12)}
+.mediarow{display:flex;gap:10px;margin:10px 0}
+#camPreview{width:100%;border-radius:14px;display:none;margin-bottom:10px;background:#000}
+/* ---------- modal / toast / busy ---------- */
+.modal{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);padding:20px}
+.modal.open{display:flex}
+.modal .mcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;max-width:420px;width:100%;max-height:80dvh;overflow-y:auto}
+.modal h3{color:var(--gold2);margin-bottom:10px}
+#endBody{white-space:pre-wrap;font-size:13px;line-height:1.6;background:var(--bg2);padding:14px;border-radius:12px;border:1px solid var(--line)}
+#toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:var(--card2);color:var(--text);border:1px solid var(--gold);padding:12px 18px;border-radius:14px;font-size:13px;font-weight:600;z-index:90;opacity:0;pointer-events:none;transition:.25s;max-width:90%;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#busy{position:fixed;inset:0;z-index:95;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7)}
+#busy.show{display:flex}
+#busy .bcard{background:var(--card);padding:22px 28px;border-radius:18px;border:1px solid var(--line);text-align:center}
+.spinner{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--gold);border-radius:50%;margin:0 auto 12px;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body data-theme="dark">
+
+<!-- ================= SPLASH ================= -->
+<div id="splash">
+  <div class="phoenix">🔥⚖️</div>
+  <div class="splash-title">PDS APP</div>
+  <div class="splash-sub">Pinoy Debate Society</div>
+  <div class="splash-tag">Truth • Wisdom • Honor</div>
+  <div class="tap-start">TAP TO START</div>
+</div>
+
+<div class="app">
+  <!-- top bar -->
+  <div class="topbar">
+    <div class="brand">
+      <span class="mark">🔥</span>
+      <div><b>PDS APP</b><small>PINOY DEBATE SOCIETY</small></div>
+    </div>
+    <div class="topbtns">
+      <button class="iconbtn" id="quickTheme" title="Toggle theme">🌙</button>
+    </div>
+  </div>
+
+  <!-- ================= HOME ================= -->
+  <section class="screen active" id="scr-home">
+    <div class="card hero">
+      <div class="ph">🔥⚖️</div>
+      <h2>PHOENIX DEBATE HUB</h2>
+      <p class="muted" style="margin-top:8px">Create a room and share the code, or join a room with your Host's code and password.</p>
+      <span class="badge gray" id="homeStatus">checking relay…</span>
+    </div>
+
+    <div class="card">
+      <h3>➕ CREATE ROOM — Host</h3>
+      <label class="flabel">Your name</label>
+      <input class="input" id="cName" placeholder="e.g. Host Marco">
+      <label class="flabel">Debate topic</label>
+      <input class="input" id="cTopic" placeholder="e.g. Should abortion be legalized in the Philippines?">
+      <label class="flabel">Format</label>
+      <div class="seg" id="cFormatSeg">
+        <button class="segbtn" data-v="1v1">1v1</button>
+        <button class="segbtn on" data-v="2v2">2v2</button>
+        <button class="segbtn" data-v="4v4">4v4</button>
+      </div>
+      <input type="hidden" id="cFormat" value="2v2">
+      <label class="flabel">Room password (leave blank = open room)</label>
+      <input class="input" id="cPwd" type="password" placeholder="e.g. 555">
+      <button class="btn gold" id="btnCreate">✅ CREATE ROOM</button>
+    </div>
+
+    <div class="card">
+      <h3>🔒 JOIN ROOM — Debater / Audience</h3>
+      <label class="flabel">Room code (6 letters from Host)</label>
+      <input class="input" id="jCode" placeholder="e.g. K7Q2XA" style="text-transform:uppercase">
+      <label class="flabel">Your name</label>
+      <input class="input" id="jName" placeholder="Your display name">
+      <label class="flabel">Your side</label>
+      <div class="seg" id="jSideSeg">
+        <button class="segbtn on" data-v="aff">✅ Affirmative</button>
+        <button class="segbtn" data-v="opp">❌ Opposition</button>
+        <button class="segbtn" data-v="aud">👀 Audience</button>
+      </div>
+      <input type="hidden" id="jSide" value="aff">
+      <label class="flabel">Room password</label>
+      <input class="input" id="jPwd" type="password" placeholder="Ask Host for the password">
+      <button class="btn" id="btnJoin">🔓 JOIN ROOM</button>
+      <div class="note">❌ Old password after Host changes it = denied automatically. ✅ People already inside stay connected. Wrong password = “Check the password and try again.”</div>
+    </div>
+
+    <div class="card">
+      <h3>📋 RECENT DEBATES</h3>
+      <div id="recentList"></div>
+    </div>
+  </section>
+
+  <!-- ================= TIMER EDIT ================= -->
+  <section class="screen" id="scr-timer">
+    <div class="card">
+      <h3>⏱️ EDIT ROUND TIMES</h3>
+      <p class="muted">Host sets minutes and seconds per round. Tap Save before starting.</p>
+      <div id="roundRows" style="margin-top:10px"></div>
+      <div class="row">
+        <button class="btn ghost" id="restoreDefaults">🔄 RESTORE DEFAULTS</button>
+        <button class="btn gold" id="saveRounds">✅ SAVE</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SCORES ================= -->
+  <section class="screen" id="scr-scores">
+    <div class="card">
+      <h3>📊 JUDGE SCOREBOARD</h3>
+      <div class="scoregrid">
+        <div class="scorecard" id="affCard"><div class="label">✅ AFFIRMATIVE</div><div class="total" id="affTotal">0</div></div>
+        <div class="scorecard" id="oppCard"><div class="label">❌ OPPOSITION</div><div class="total" id="oppTotal">0</div></div>
+      </div>
+      <div class="muted" style="text-align:center;font-weight:700" id="scoreVerdict">🤝 TIED</div>
+      <div class="scorebtns" style="margin-top:14px">
+        <button class="btn" data-side="aff" data-delta="1" style="margin-top:0">➕ Aff</button>
+        <button class="btn" data-side="aff" data-delta="-1" style="margin-top:0">➖ Aff</button>
+        <button class="btn" data-side="opp" data-delta="1" style="margin-top:0">➕ Opp</button>
+        <button class="btn" data-side="opp" data-delta="-1" style="margin-top:0">➖ Opp</button>
+      </div>
+      <button class="btn gold" id="btnFinalize">📋 FINALIZE & SAVE RESULTS</button>
+    </div>
+    <div class="card">
+      <h3>📝 ADJUSTMENT LOG</h3>
+      <div id="scoreLog"></div>
+    </div>
+  </section>
+
+  <!-- ================= AI ================= -->
+  <section class="screen" id="scr-ai">
+    <div class="card">
+      <h3>🤖 EVIDENCE VERIFIER (DEMO)</h3>
+      <label class="flabel">Enter claim or paste a statistic</label>
+      <textarea class="input" id="aiInput" rows="3" placeholder="e.g. According to a 2024 PSA survey, 75% of Filipino households use mobile internet."></textarea>
+      <button class="btn gold" id="btnCheck">⚡ CHECK NOW</button>
+      <div class="verdict" id="aiVerdict"></div>
+      <div class="note">Demo heuristic checker only: source words → Verified; numbers without a citation → Needs Source; otherwise Not Verified. Real fact-checking needs an external fact-checking API — this screen is a practice aid, not a substitute for research.</div>
+    </div>
+    <div class="card">
+      <h3>📋 RECENT CHECKS</h3>
+      <div id="aiHistory"></div>
+    </div>
+  </section>
+
+  <!-- ================= PROFILE ================= -->
+  <section class="screen" id="scr-profile">
+    <div class="card">
+      <h3>🔒 ROOM PASSWORD</h3>
+      <div class="muted">Current: <span id="curPwdMask">(open room — no password)</span></div>
+      <label class="flabel">Current password</label>
+      <input class="input" id="curPwd" type="password">
+      <label class="flabel">New password</label>
+      <input class="input" id="newPwd" type="password">
+      <label class="flabel">Confirm new password</label>
+      <input class="input" id="cfPwd" type="password">
+      <button class="btn gold" id="changePwdBtn">🔑 CHANGE PASSWORD</button>
+      <div class="note">After changing: old passwords are rejected for new joiners; users already inside stay connected and are not kicked out.</div>
+    </div>
+    <div class="card">
+      <h3>🎨 APPEARANCE</h3>
+      <div class="setrow">
+        <span>Theme</span>
+        <div class="radios">
+          <label class="radio"><input type="radio" name="theme" value="dark"> 🌙 Dark</label>
+          <label class="radio"><input type="radio" name="theme" value="light"> ☀️ Light</label>
+        </div>
+      </div>
+      <div class="setrow">
+        <span>🔔 Sounds (beeps & warnings)</span>
+        <div class="switch on" id="soundToggle"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>ℹ️ ABOUT PDS APP</h3>
+      <p class="muted" style="line-height:1.7">Pinoy Debate Society — Truth • Wisdom • Honor.<br><br>
+      • Online rooms use a free public demo relay (PeerJS); for large events, host a dedicated server.<br>
+      • Mic/camera toggles are local previews and need browser permission over HTTPS/localhost.<br>
+      • TikTok / YouTube / Facebook buttons are demo toggles; real streaming needs a platform stream key / RTMP.<br>
+      • AI checker is a heuristic demo — always verify sources yourself.</p>
+    </div>
+  </section>
+
+  <!-- ================= LIVE DEBATE ================= -->
+  <section class="screen" id="scr-live">
+    <div class="card">
+      <div class="live-head">
+        <span class="badge gold" id="liveBadge">—</span>
+        <span class="people-count" id="peopleCount">0 online</span>
+        <button class="btn ghost" id="copyCode" style="margin-top:0;padding:8px 12px;flex:none">📋 COPY CODE + LINK</button>
+      </div>
+      <div class="topic-line" id="liveTopic">No topic yet</div>
+      <div class="muted" id="liveFormat">Format: —</div>
+    </div>
+
+    <div class="pgrid">
+      <div class="pcol" id="affCol"></div>
+      <div class="pcol" id="oppCol"></div>
+    </div>
+
+    <div class="timer-card" id="timerCard">
+      <div id="roundName">Ready</div>
+      <div id="timerText">00:00</div>
+      <div id="speakerNow">Ready — Host presses Start</div>
+      <div class="timerbar"><div id="timerBar" style="width:0%"></div></div>
+    </div>
+
+    <div class="guest-hint" id="guestHint" style="display:none">You are joined as a guest — watch the timer, chat, and request score points. The Host controls the clock.</div>
+
+    <div class="ctlrow" id="hostControls">
+      <button class="btn gold" id="btnStart">▶ Start</button>
+      <button class="btn" id="btnSkip">⏭ Skip</button>
+      <button class="btn" id="btnPrev">⏮ Prev</button>
+      <button class="btn" id="btnReset">🔄 Reset</button>
+      <button class="btn danger" id="btnEnd2">🏁 END</button>
+    </div>
+
+    <div class="mediarow">
+      <button class="btn" id="btnMic" style="margin-top:0">🎙️ Mic: OFF</button>
+      <button class="btn" id="btnCam" style="margin-top:0">📷 Camera: OFF</button>
+    </div>
+    <video id="camPreview" autoplay playsinline muted></video>
+
+    <div class="card">
+      <h3>💬 LIVE CHAT</h3>
+      <div class="chatbox" id="chatBox"></div>
+      <div class="chat-input">
+        <input class="input" id="chatInput" placeholder="Type a respectful message…">
+        <button class="btn gold" id="btnSendChat" style="margin-top:0;flex:none;padding:12px 18px">Send</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📡 BROADCAST (DEMO)</h3>
+      <div class="streamrow">
+        <button class="streambtn" data-plat="TikTok">🎵 TikTok</button>
+        <button class="streambtn" data-plat="YouTube">▶ YouTube</button>
+        <button class="streambtn" data-plat="Facebook">📘 Facebook</button>
+      </div>
+      <div class="note">Demo status toggles only. Real broadcasting requires each platform's stream key / RTMP setup and an encoder.</div>
+    </div>
+
+    <button class="btn danger" id="btnEnd">🏁 END DEBATE & AUTO-SUMMARY</button>
+  </section>
+</div>
+
+<!-- bottom nav -->
+<nav class="bottomnav">
+  <button class="navbtn active" data-target="home"><span class="ic">🏠</span>Home</button>
+  <button class="navbtn" data-target="timer"><span class="ic">⏱️</span>Timer</button>
+  <button class="navbtn" data-target="scores"><span class="ic">📊</span>Scores</button>
+  <button class="navbtn" data-target="ai"><span class="ic">🤖</span>AI</button>
+  <button class="navbtn" data-target="profile"><span class="ic">👤</span>Profile</button>
+</nav>
+
+<!-- end summary modal -->
+<div class="modal" id="endModal">
+  <div class="mcard">
+    <h3>📋 AUTO DEBATE SUMMARY</h3>
+    <p class="muted" id="endTopic"></p>
+    <div id="endBody" style="margin-top:10px"></div>
+    <button class="btn gold" id="copyReport">📋 COPY REPORT</button>
+    <button class="btn ghost" id="closeEnd">Close</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="busy"><div class="bcard"><div class="spinner"></div><div id="busyText">Connecting…</div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+'use strict';
+/* ================= helpers ================= */
+const $=s=>document.querySelector(s);
+const $$=s=>Array.from(document.querySelectorAll(s));
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+function toast(msg,ms){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),ms||2800);}
+function setBusy(on,txt){$('#busy').classList.toggle('show',on);if(txt)$('#busyText').textContent=txt;}
+function mmss(sec){sec=Math.max(0,Math.round(sec));const m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function copyText(t){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast('Copied!')).catch(()=>fallbackCopy(t));}else fallbackCopy(t);}
+function fallbackCopy(t){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Copied!');}catch(e){}ta.remove();}
+
+/* ================= constants & state ================= */
+const DEFAULT_ROUNDS=[
+ {name:'Opening — Affirmative',side:'aff',m:5,s:0},
+ {name:'Opening — Opposition',side:'opp',m:5,s:0},
+ {name:'Rebuttal — Affirmative',side:'aff',m:3,s:0},
+ {name:'Rebuttal — Opposition',side:'opp',m:3,s:0},
+ {name:'Cross-Ex — Aff → Opp',side:'aff',m:3,s:0},
+ {name:'Cross-Ex — Opp → Aff',side:'opp',m:3,s:0},
+ {name:'Closing — Affirmative',side:'aff',m:3,s:0},
+ {name:'Closing — Opposition',side:'opp',m:3,s:0}
+];
+const S={
+ role:'idle', roomCode:'', personName:'Guest',
+ topic:'', format:'2v2', pwd:'', oldPwds:[],
+ rounds:JSON.parse(JSON.stringify(DEFAULT_ROUNDS)),
+ roundIdx:0, remain:0, status:'idle',
+ scores:{aff:0,opp:0}, scoreLog:[],
+ people:[], chat:[], aiLog:[],
+ settings:store.get('pds-v3-settings',{theme:'dark',sound:true}),
+ history:store.get('pds-v3-history',[]),
+ micOn:false, camOn:false
+};
+let peer=null, conn=null, conns=new Map(), timerId=null, micStream=null, camStream=null;
+const hasPeer=()=>typeof window.Peer!=='undefined';
+
+/* ================= sound ================= */
+let actx=null;
+function beep(kind){
+ if(!S.settings.sound)return;
+ try{
+  actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==='suspended')actx.resume();
+  const o=actx.createOscillator(),g=actx.createGain();
+  o.connect(g);g.connect(actx.destination);
+  const f={start:880,warn:620,end:300,join:520,click:700}[kind]||700;
+  const dur={start:.12,warn:.28,end:.45,join:.16,click:.06}[kind]||.08;
+  o.frequency.value=f;g.gain.setValueAtTime(.0001,actx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.22,actx.currentTime+.015);
+  g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+dur);
+  o.start();o.stop(actx.currentTime+dur+.03);
+ }catch(e){}
+}
+
+/* ================= theme ================= */
+function applyTheme(){
+ document.body.dataset.theme=S.settings.theme;
+ $$('input[name=theme]').forEach(r=>r.checked=r.value===S.settings.theme);
+ $('#quickTheme').textContent=S.settings.theme==='dark'?'🌙':'☀️';
+ $('#soundToggle').classList.toggle('on',S.settings.sound);
+}
+$$('input[name=theme]').forEach(r=>r.addEventListener('change',()=>{S.settings.theme=r.value;store.set('pds-v3-settings',S.settings);applyTheme();}));
+$('#quickTheme').addEventListener('click',()=>{S.settings.theme=S.settings.theme==='dark'?'light':'dark';store.set('pds-v3-settings',S.settings);applyTheme();});
+$('#soundToggle').addEventListener('click',()=>{S.settings.sound=!S.settings.sound;store.set('pds-v3-settings',S.settings);applyTheme();if(S.settings.sound)beep('click');});
+
+/* ================= navigation ================= */
+function showScreen(id){
+ $$('.screen').forEach(s=>s.classList.remove('active'));
+ const el=$('#scr-'+id); if(el)el.classList.add('active');
+ $$('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.target===id));
+ window.scrollTo(0,0);
+}
+$$('.navbtn').forEach(b=>b.addEventListener('click',()=>{showScreen(b.dataset.target);beep('click');}));
+$('#splash').addEventListener('click',()=>{$('#splash').classList.add('hide');showScreen('home');beep('click');refreshStatus();});
+
+/* ================= seg controls ================= */
+function bindSeg(segId,hiddenId){
+ const seg=$(segId),hid=$(hiddenId);
+ seg.querySelectorAll('.segbtn').forEach(b=>b.addEventListener('click',()=>{
+  seg.querySelectorAll('.segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');hid.value=b.dataset.v;beep('click');
+ }));
+}
+bindSeg('#cFormatSeg','#cFormat');
+bindSeg('#jSideSeg','#jSide');
+
+/* ================= online relay (zero-signup PeerJS) ================= */
+function makeCode(){const c='abcdefghjkmnpqrstuvwxyz23456789';let o='';for(let i=0;i<6;i++)o+=c[Math.floor(Math.random()*c.length)];return o.toUpperCase();}
+function refreshStatus(){
+ const el=$('#homeStatus');
+ if(!hasPeer()){el.textContent='OFFLINE MODE (relay library blocked)';el.className='badge gray';return;}
+ el.textContent='ONLINE RELAY READY';el.className='badge green';
+}
+
+function snapshot(){return{topic:S.topic,format:S.format,code:S.roomCode,rounds:S.rounds.map(r=>({name:r.name,m:r.m,s:r.s})),roundIdx:S.roundIdx,remain:S.remain,status:S.status,scores:S.scores,chat:S.chat.slice(-60)};}
+function broadcast(msg){conns.forEach(c=>{try{c.send(msg||{t:'snap',snap:snapshot()});}catch(e){}});}
+function broadcastPeople(){conns.forEach(c=>{try{c.send({t:'people',people:S.people});}catch(e){}});renderPeople();}
+
+function createRoom(){
+ const name=$('#cName').value.trim(),topic=$('#cTopic').value.trim(),format=$('#cFormat').value,pwd=$('#cPwd').value;
+ if(!topic){toast('Type the debate topic first');return;}
+ S.personName=name||'Host';S.topic=topic;S.format=format;S.pwd=pwd;S.oldPwds=[];
+ S.scores={aff:0,opp:0};S.scoreLog=[];S.chat=[];S.people=[];S.roundIdx=0;S.status='idle';
+ S.rounds=JSON.parse(JSON.stringify(DEFAULT_ROUNDS));S.remain=S.rounds[0].m*60+S.rounds[0].s;
+ S.people.push({id:'host',name:S.personName,side:'host',host:true,mic:false,cam:false});
+ if(!hasPeer()){S.role='local';enterLive();toast('Online relay unavailable — offline local demo on this device');return;}
+ setBusy(true,'Contacting online relay…');
+ const code=makeCode();
+ try{
+  peer=new Peer('pds-'+code.toLowerCase());
+  peer.on('open',()=>{setBusy(false);S.role='host';S.roomCode=code;enterLive();toast('Room live! Share code: '+code);broadcast();});
+  peer.on('connection',c=>hostConnection(c));
+  peer.on('error',()=>{setBusy(false);if(S.role!=='host'){S.role='local';enterLive();toast('Relay unreachable — offline local demo mode');}});
+ }catch(e){setBusy(false);S.role='local';enterLive();}
+}
+
+function hostConnection(c){
+ c.on('open',()=>{conns.set(c.peer,c);});
+ c.on('data',d=>{
+  if(!d||!d.t)return;
+  if(d.t==='hello'){
+   let res='ok';
+   if(S.pwd!==''){
+    if(d.pwd===S.pwd)res='ok';
+    else if(S.oldPwds.includes(d.pwd))res='old';
+    else res='wrong';
+   }
+   if(res==='ok'){
+    conns.set(c.peer,c);
+    S.people.push({id:c.peer,name:d.name||'Debater',side:d.side||'aud',host:false,mic:false,cam:false});
+    c.send({t:'welcome',ok:true,snap:snapshot()});
+    broadcastPeople();broadcast();beep('join');
+   }else{
+    c.send({t:'welcome',ok:false,reason:res});
+    setTimeout(()=>{try{c.close();}catch(e){}},700);
+   }
+  }else if(d.t==='chat'){
+   const item={name:d.name||'Guest',text:String(d.text||'').slice(0,300),ts:Date.now()};
+   S.chat.push(item);renderChat();broadcast({t:'chatmsg',item});
+  }else if(d.t==='score'){applyScore(d.side,d.delta,d.name||'Judge');broadcast();}
+  else if(d.t==='mic'){const p=S.people.find(p=>p.id===c.peer);if(p){p.mic=!!d.mic;p.cam=!!d.cam;renderPeople();broadcastPeople();}}
+ });
+ c.on('close',()=>{conns.delete(c.peer);S.people=S.people.filter(p=>p.id!==c.peer);renderPeople();broadcastPeople();});
+}
+
+function joinRoom(){
+ const code=$('#jCode').value.trim().replace(/[^a-z0-9]/gi,'').toLowerCase();
+ const pwd=$('#jPwd').value,name=$('#jName').value.trim(),side=$('#jSide').value;
+ if(!code){toast('Enter the Room Code from Host');return;}
+ if(!name){toast('Type your display name first');return;}
+ if(!hasPeer()){toast('Online relay not supported in this browser');return;}
+ setBusy(true,'Connecting to room…');
+ try{peer=new Peer();}catch(e){setBusy(false);toast('Could not start connection');return;}
+ peer.on('open',()=>{
+  conn=peer.connect('pds-'+code,{reliable:true});
+  if(!conn){setBusy(false);toast('Connection failed');return;}
+  conn.on('open',()=>{conn.send({t:'hello',name,side,pwd});});
+  conn.on('data',onGuestData);
+  conn.on('close',()=>{if(S.role==='guest')toast('Host ended the connection');});
+  conn._guard=setTimeout(()=>{if(S.role!=='guest'){setBusy(false);try{conn.close();}catch(e){}toast('No response — check code and internet');}},9000);
+ });
+ peer.on('error',e=>{setBusy(false);if(e&&e.type==='peer-unavailable')toast('Room not found — ask Host for the correct code');else toast('Relay unreachable — check internet connection');});
+}
+
+function onGuestData(d){
+ if(!d||!d.t)return;
+ if(d.t==='welcome'){
+  if(conn&&conn._guard)clearTimeout(conn._guard);
+  setBusy(false);
+  if(!d.ok){
+   if(d.reason==='old')toast('Password changed — ask Host for the NEW one',3800);
+   else toast('Wrong password — check with Host',3200);
+   try{conn&&conn.close();}catch(e){}
+   return;
+  }
+  S.role='guest';S.personName=$('#jName').value.trim();applySnap(d.snap);enterLive();toast('Joined room '+S.roomCode);beep('join');
+ }else if(d.t==='snap'||d.t==='state'){applySnap(d.snap);}
+ else if(d.t==='people'){S.people=d.people;renderPeople();}
+ else if(d.t==='chatmsg'){S.chat.push(d.item);renderChat();}
+ else if(d.t==='end'){showEnd(d.summary);}
+}
+function applySnap(s){
+ if(!s)return;
+ S.topic=s.topic;S.format=s.format;S.roomCode=s.code;
+ S.rounds=(s.rounds||[]).map(r=>({name:r.name,m:r.m,s:r.s}));
+ S.roundIdx=s.roundIdx||0;S.remain=s.remain||0;S.status=s.status||'idle';S.scores=s.scores||{aff:0,opp:0};
+ if(s.chat)S.chat=s.chat;
+ renderLiveHeader();renderTimer();renderScores();renderPeople();renderChat();
+}
+
+/* ================= live screen ================= */
+function enterLive(){
+ renderLiveHeader();renderPeople();renderTimer();renderScores();renderChat();
+ showScreen('live');
+ const badge=$('#liveBadge');
+ badge.textContent=S.role==='host'?'HOST · LIVE':S.role==='guest'?'GUEST · CONNECTED':S.role==='local'?'OFFLINE DEMO':'—';
+ badge.className='badge '+(S.role==='host'?'gold':S.role==='guest'?'green':'gray');
+ $('#hostControls').style.display=(S.role==='host'||S.role==='local')?'flex':'none';
+ $('#guestHint').style.display=(S.role==='guest')?'block':'none';
+}
+function renderLiveHeader(){
+ $('#liveTopic').textContent='📝 '+(S.topic||'No topic set');
+ $('#liveFormat').textContent='Format: '+(S.format||'—')+(S.roomCode?' · Code: '+S.roomCode:'');
+}
+
+/* ================= timer engine (host authoritative) ================= */
+function currentRound(){return S.rounds[S.roundIdx]||S.rounds[0];}
+function renderTimer(){
+ const r=currentRound();
+ $('#roundName').textContent=(S.roundIdx+1)+'. '+r.name;
+ $('#timerText').textContent=mmss(S.remain);
+ const card=$('#timerCard');card.classList.remove('st-run','st-warn','st-done');
+ if(S.status==='running')card.classList.add(S.remain<=30?'st-warn':'st-run');
+ else if(S.status==='done')card.classList.add('st-done');
+ $('#speakerNow').textContent=S.status==='running'?'🟢 Now speaking: '+r.name:(S.status==='paused'?'⏸ Paused':(S.status==='done'?'🏁 Debate finished':'Ready — Host presses Start'));
+ const total=r.m*60+r.s;
+ $('#timerBar').style.width=(total?Math.max(0,S.remain/total*100):0)+'%';
+ $('#btnStart').textContent=S.status==='running'?'⏸ Pause':'▶ Start';
+}
+function startTimer(){if(S.status==='done')return;S.status='running';beep('start');if(S.role==='host')broadcast();renderTimer();if(!timerId)timerId=setInterval(tick,1000);}
+function pauseTimer(){if(S.status!=='running')return;S.status='paused';if(S.role==='host')broadcast();renderTimer();}
+function toggleStart(){if(S.role==='guest'){toast('Only the Host controls the timer');return;}if(S.status==='running')pauseTimer();else startTimer();}
+function tick(){
+ if(S.status!=='running')return;
+ S.remain--;
+ if(S.remain===30){beep('warn');toast('30 seconds left',1600);}
+ if(S.remain<=0){beep('end');if(S.role==='host'||S.role==='local')advanceRound();else{S.status='done';renderTimer();}return;}
+ renderTimer();if(S.role==='host')broadcast();
+}
+function advanceRound(){
+ if(S.roundIdx>=S.rounds.length-1){finishDebate(false);return;}
+ S.roundIdx++;S.remain=S.rounds[S.roundIdx].m*60+S.rounds[S.roundIdx].s;S.status='running';beep('join');renderTimer();broadcast();
+}
+function hostOnly(){return S.role==='host'||S.role==='local';}
+function skipRound(){if(!hostOnly()){toast('Host only');return;}if(S.roundIdx<S.rounds.length-1){S.roundIdx++;S.remain=S.rounds[S.roundIdx].m*60+S.rounds[S.roundIdx].s;S.status='running';renderTimer();broadcast();}}
+function prevRound(){if(!hostOnly()){toast('Host only');return;}if(S.roundIdx>0){S.roundIdx--;S.remain=S.rounds[S.roundIdx].m*60+S.rounds[S.roundIdx].s;renderTimer();broadcast();}}
+function resetTimer(){if(!hostOnly()){toast('Host only');return;}S.roundIdx=0;S.remain=S.rounds[0].m*60+S.rounds[0].s;S.status='idle';renderTimer();broadcast();}
+
+$('#btnStart').addEventListener('click',toggleStart);
+$('#btnSkip').addEventListener('click',skipRound);
+$('#btnPrev').addEventListener('click',prevRound);
+$('#btnReset').addEventListener('click',resetTimer);
+$('#btnEnd2').addEventListener('click',()=>{if(hostOnly())finishDebate(true);});
+$('#btnEnd').addEventListener('click',()=>{if(hostOnly())finishDebate(true);else toast('Only the Host can end the debate');});
+
+/* ================= end summary ================= */
+function buildSummary(manual){
+ const r=S.scores.aff-S.scores.opp;
+ const result=r>0?'Affirmative wins':r<0?'Opposition wins':'Tied score';
+ const ai=S.aiLog.filter(x=>x.v==='verified').map(x=>'✅ '+x.text)
+   .concat(S.aiLog.filter(x=>x.v==='source').map(x=>'⚠ '+x.text+' (needs source)'));
+ return{topic:S.topic,format:S.format,date:new Date().toLocaleString(),aff:S.scores.aff,opp:S.scores.opp,
+  result:result,people:S.people.filter(p=>!p.host).map(p=>p.name),ai:ai,manual:!!manual,rounds:S.roundIdx+1};
+}
+function formatSummary(s){
+ const L=[];
+ L.push('PDS APP — DEBATE SUMMARY');
+ L.push('Topic: '+(s.topic||'(no topic)'));
+ L.push('Format: '+s.format+'  |  Date: '+s.date);
+ L.push('Score: Affirmative '+s.aff+' — Opposition '+s.opp+'  →  '+s.result);
+ L.push('Rounds reached: '+s.rounds+' of 8');
+ L.push('Participants: '+(s.people&&s.people.length?s.people.join(', '):'Host only'));
+ if(s.ai&&s.ai.length){L.push('Evidence checks:');s.ai.forEach(x=>L.push(' - '+x));}
+ L.push('Note: AI checks are heuristic demo results; broadcast buttons are demo toggles.');
+ return L.join('\n');
+}
+function finishDebate(manual){
+ clearInterval(timerId);timerId=null;S.status='done';renderTimer();
+ const summary=buildSummary(manual);
+ if(S.role!=='guest'){broadcast({t:'end',summary});saveHistory(summary);}
+ showEnd(summary);
+}
+function showEnd(s){
+ $('#endTopic').textContent=s.topic||'';
+ $('#endBody').textContent=formatSummary(s);
+ $('#endModal').classList.add('open');
+}
+$('#copyReport').addEventListener('click',()=>copyText($('#endBody').textContent));
+$('#closeEnd').addEventListener('click',()=>$('#endModal').classList.remove('open'));
+
+/* ================= scores ================= */
+function applyScore(side,delta,who){
+ if(side!=='aff'&&side!=='opp')return;
+ S.scores[side]=Math.max(0,S.scores[side]+delta);
+ S.scoreLog.unshift((who||'Judge')+' · '+(side==='aff'?'Aff':'Opp')+(delta>0?' +':' ')+delta+' · '+new Date().toLocaleTimeString());
+ renderScores();
+}
+function requestScore(side,delta){
+ if(S.role==='guest'&&conn){conn.send({t:'score',side,delta,name:S.personName});}
+ else{applyScore(side,delta,S.role==='host'?'Host':'Judge');if(S.role==='host')broadcast();}
+}
+$$('.scorebtns .btn').forEach(b=>b.addEventListener('click',()=>requestScore(b.dataset.side,parseInt(b.dataset.delta,10))));
+function renderScores(){
+ $('#affTotal').textContent=S.scores.aff;$('#oppTotal').textContent=S.scores.opp;
+ $('#affCard').classList.toggle('lead',S.scores.aff>S.scores.opp);
+ $('#oppCard').classList.toggle('lead',S.scores.opp>S.scores.aff);
+ $('#scoreVerdict').textContent=S.scores.aff===S.scores.opp?'🤝 TIED':(S.scores.aff>S.scores.opp?'✅ AFFIRMATIVE LEADS':'❌ OPPOSITION LEADS');
+ $('#scoreLog').innerHTML=S.scoreLog.slice(0,8).map(x=>'<div class="logline">'+escapeHtml(x)+'</div>').join('')||'<div class="muted">No score adjustments yet.</div>';
+}
+$('#btnFinalize').addEventListener('click',()=>{
+ const s=buildSummary(true);saveHistory(s);toast('Results saved to Debate History');showScreen('home');
+});
+
+/* ================= timer editor ================= */
+function renderRoundEditor(){
+ $('#roundRows').innerHTML=S.rounds.map((r,i)=>
+  '<div class="roundrow"><div class="rnum">'+(i+1)+'</div><div class="rinfo"><div class="rname">'+escapeHtml(r.name)+'</div><div class="rside">'+(r.side==='aff'?'Affirmative':'Opposition')+'</div></div>'+
+  '<div class="rtime"><input type="number" min="0" max="59" id="rm'+i+'" value="'+r.m+'"><span>m</span><input type="number" min="0" max="59" id="rs'+i+'" value="'+r.s+'"><span>s</span></div></div>'
+ ).join('');
+}
+$('#restoreDefaults').addEventListener('click',()=>{S.rounds=JSON.parse(JSON.stringify(DEFAULT_ROUNDS));renderRoundEditor();toast('Defaults restored (5:00 / 3:00)');});
+$('#saveRounds').addEventListener('click',()=>{
+ S.rounds.forEach((r,i)=>{const m=parseInt($('#rm'+i).value,10)||0,s=parseInt($('#rs'+i).value,10)||0;r.m=Math.min(59,Math.max(0,m));r.s=Math.min(59,Math.max(0,s));});
+ if(S.role==='host')broadcast();
+ if(S.status==='idle'){S.remain=S.rounds[0].m*60+S.rounds[0].s;renderTimer();}
+ toast('Round times saved');
+});
+
+/* ================= AI checker ================= */
+function runCheck(){
+ const txt=$('#aiInput').value.trim();if(!txt){toast('Type a claim or statistic first');return;}
+ const src=/according to|study|research|survey|data|statistics|statistic|psa|university|journal|report|cite|source|poll|commission|department|census|world bank|who|doh|npso|national/i;
+ const num=/\d|%|percent/i;
+ let v='unverified',label='❌ NOT VERIFIED — double-check before using',cls='red';
+ if(src.test(txt)){v='verified';label='✅ VERIFIED — source language present (good to use, still cite it)';cls='green';}
+ else if(num.test(txt)){v='source';label='⚠️ NEEDS SOURCE — add a citation before using this claim';cls='yellow';}
+ S.aiLog.unshift({text:txt,v:v,ts:Date.now()});
+ const b=$('#aiVerdict');b.className='verdict show '+cls;b.textContent=label;
+ renderAiHistory();$('#aiInput').value='';
+}
+$('#btnCheck').addEventListener('click',runCheck);
+$('#aiInput').addEventListener('keydown',e=>{if(e.key==='Enter')runCheck();});
+function renderAiHistory(){
+ $('#aiHistory').innerHTML=S.aiLog.slice(0,12).map(x=>{
+  const icon=x.v==='verified'?'✅':x.v==='source'?'⚠️':'❌';
+  return '<div class="aiitem">'+icon+' '+escapeHtml(x.text)+'</div>';
+ }).join('')||'<div class="muted">No checks yet.</div>';
+}
+
+/* ================= chat ================= */
+function renderChat(){
+ $('#chatBox').innerHTML=S.chat.slice(-50).map(m=>'<div class="msg"><b>'+escapeHtml(m.name)+':</b> '+escapeHtml(m.text)+'</div>').join('')||'<div class="muted">No messages yet — say hello!</div>';
+ const box=$('#chatBox');box.scrollTop=box.scrollHeight;
+}
+function sendChat(){
+ const inp=$('#chatInput'),text=inp.value.trim();if(!text)return;
+ const item={name:S.personName||'Guest',text:text,ts:Date.now()};
+ if(S.role==='guest'&&conn){conn.send({t:'chat',text:text,name:item.name});}
+ else{S.chat.push(item);renderChat();broadcast({t:'chatmsg',item});}
+ inp.value='';
+}
+$('#btnSendChat').addEventListener('click',sendChat);
+$('#chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat();});
+
+/* ================= people / speaker panels ================= */
+function renderPeople(){
+ const n=S.format==='4v4'?4:S.format==='2v2'?2:1;
+ const aff=S.people.filter(p=>p.side==='aff'),opp=S.people.filter(p=>p.side==='opp');
+ const col=(list,label,icon)=>{
+  let h='<div class="phead">'+icon+' '+label+'</div>';
+  for(let i=0;i<n;i++){const p=list[i];
+   h+=p?'<div class="pcard '+p.side+'"><span>'+escapeHtml(p.name)+'</span><span class="pdots">'+(p.mic?'🎙️':'🔇')+(p.cam?'📷':'')+'</span></div>'
+       :'<div class="pcard empty">Speaker '+(i+1)+' — waiting…</div>';
+  }
+  return h;
+ };
+ $('#affCol').innerHTML=col(aff,'AFFIRMATIVE','✅');
+ $('#oppCol').innerHTML=col(opp,'OPPOSITION','❌');
+ $('#peopleCount').textContent=S.people.filter(p=>!p.host).length+' guest(s) online';
+}
+
+/* ================= mic / camera ================= */
+function stopTracks(st){if(st)st.getTracks().forEach(t=>t.stop());}
+async function toggleMic(){
+ try{
+  if(S.micOn){stopTracks(micStream);micStream=null;S.micOn=false;}
+  else{micStream=await navigator.mediaDevices.getUserMedia({audio:true});S.micOn=true;}
+ }catch(e){toast('Mic blocked — allow permission (needs HTTPS/localhost)');}
+ announceMedia();renderMediaBtns();
+}
+async function toggleCam(){
+ try{
+  if(S.camOn){stopTracks(camStream);camStream=null;S.camOn=false;$('#camPreview').style.display='none';}
+  else{camStream=await navigator.mediaDevices.getUserMedia({video:true});S.camOn=true;const v=$('#camPreview');v.srcObject=camStream;v.play();v.style.display='block';}
+ }catch(e){toast('Camera blocked — allow permission (needs HTTPS/localhost)');}
+ announceMedia();renderMediaBtns();
+}
+function announceMedia(){
+ if(S.role==='guest'&&conn){conn.send({t:'mic',mic:S.micOn,cam:S.camOn});}
+ else if(S.role==='host'){const me=S.people.find(p=>p.host);if(me){me.mic=S.micOn;me.cam=S.camOn;}broadcastPeople();}
+}
+function renderMediaBtns(){
+ $('#btnMic').textContent=S.micOn?'🎙️ Mic: ON':'🎙️ Mic: OFF';
+ $('#btnCam').textContent=S.camOn?'📷 Camera: ON':'📷 Camera: OFF';
+}
+$('#btnMic').addEventListener('click',toggleMic);
+$('#btnCam').addEventListener('click',toggleCam);
+
+/* ================= demo stream buttons ================= */
+$$('.streambtn').forEach(b=>b.addEventListener('click',()=>{
+ b.classList.toggle('on');
+ toast(b.classList.contains('on')?b.dataset.plat+' ON AIR (demo toggle)':b.dataset.plat+' demo stopped',2200);
+}));
+
+/* ================= profile password ================= */
+$('#changePwdBtn').addEventListener('click',()=>{
+ const cur=$('#curPwd').value,np=$('#newPwd').value,cf=$('#cfPwd').value;
+ if(S.pwd!==cur){toast('Current password does not match');return;}
+ if(!np){toast('Type a new password');return;}
+ if(np!==cf){toast('New passwords do not match');return;}
+ if(S.pwd&&S.pwd!=='')S.oldPwds.push(S.pwd);
+ S.pwd=np;
+ $('#curPwdMask').textContent='●'.repeat(Math.min(10,S.pwd.length));
+ $('#curPwd').value='';$('#newPwd').value='';$('#cfPwd').value='';
+ toast('Password changed — old passwords now rejected for new joiners');
+});
+
+/* ================= history ================= */
+function saveHistory(s){
+ S.history.unshift({topic:s.topic,format:s.format,date:s.date,aff:s.aff,opp:s.opp,result:s.result});
+ S.history=S.history.slice(0,12);store.set('pds-v3-history',S.history);renderRecent();
+}
+function renderRecent(){
+ $('#recentList').innerHTML=S.history.map(h=>
+  '<div class="histitem"><div><b>'+escapeHtml(h.topic)+'</b><div class="muted">'+escapeHtml(h.format)+' · '+escapeHtml(h.date)+'</div></div><div class="hscore">'+h.aff+'–'+h.opp+'<div class="muted small">'+escapeHtml(h.result)+'</div></div></div>'
+ ).join('')||'<div class="muted">No past debates yet. Create or join a room to start one!</div>';
+}
+
+/* ================= wiring: home buttons + copy link ================= */
+$('#btnCreate').addEventListener('click',createRoom);
+$('#btnJoin').addEventListener('click',joinRoom);
+$('#copyCode').addEventListener('click',()=>{
+ if(!S.roomCode){toast('No active room code');return;}
+ const url=(location.href.split('?')[0])+'?room='+S.roomCode;
+ copyText('PDS APP ROOM\nCode: '+S.roomCode+'\nJoin link: '+url);
+});
+const q=new URLSearchParams(location.search);
+if(q.get('room'))$('#jCode').value=q.get('room').toUpperCase();
+
+/* ================= init ================= */
+applyTheme();renderRoundEditor();renderScores();renderRecent();renderAiHistory();refreshStatus();
+</script>
+</body>
+</html>
